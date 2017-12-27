@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the MIT License, Version 2.0. See License.txt in the project root for license information.
 
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Xunit;
 
 namespace Identity.Test
@@ -38,11 +38,13 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(await role.CreateAsync(new IdentityRole("Local")));
             UnitTestHelper.IsSuccess(await manager.AddToRoleAsync(user.Id, "Admin"));
             UnitTestHelper.IsSuccess(await manager.AddToRoleAsync(user.Id, "Local"));
+
             Claim[] userClaims =
             {
                 new Claim("Whatever", "Value"),
                 new Claim("Whatever2", "Value2")
             };
+
             foreach (var c in userClaims)
             {
                 UnitTestHelper.IsSuccess(await manager.AddClaimAsync(user.Id, c));
@@ -52,20 +54,21 @@ namespace Identity.Test
             var claimsFactory = manager.ClaimsIdentityFactory as ClaimsIdentityFactory<IdentityUser, string>;
             Assert.NotNull(claimsFactory);
             var claims = identity.Claims;
+
             Assert.NotNull(claims);
-            Assert.True(
-                claims.Any(c => c.Type == claimsFactory.UserNameClaimType && c.Value == user.UserName));
-            Assert.True(claims.Any(c => c.Type == claimsFactory.UserIdClaimType && c.Value == user.Id));
-            Assert.True(claims.Any(c => c.Type == claimsFactory.RoleClaimType && c.Value == "Admin"));
-            Assert.True(claims.Any(c => c.Type == claimsFactory.RoleClaimType && c.Value == "Local"));
-            Assert.True(
-                claims.Any(
-                    c =>
-                        c.Type == ClaimsIdentityFactory<IdentityUser>.IdentityProviderClaimType &&
-                        c.Value == ClaimsIdentityFactory<IdentityUser>.DefaultIdentityProviderClaimValue));
+
+            Assert.Contains(claims, c => c.Type == claimsFactory.UserNameClaimType && c.Value == user.UserName);
+            Assert.Contains(claims, c => c.Type == claimsFactory.UserIdClaimType && c.Value == user.Id);
+            Assert.Contains(claims, c => c.Type == claimsFactory.RoleClaimType && c.Value == "Admin");
+            Assert.Contains(claims, c => c.Type == claimsFactory.RoleClaimType && c.Value == "Local");
+
+            Assert.Contains(claims, c =>
+                c.Type == ClaimsIdentityFactory<IdentityUser>.IdentityProviderClaimType &&
+                c.Value == ClaimsIdentityFactory<IdentityUser>.DefaultIdentityProviderClaimValue);
+
             foreach (var cl in userClaims)
             {
-                Assert.True(claims.Any(c => c.Type == cl.Type && c.Value == cl.Value));
+                Assert.Contains(claims, c => c.Type == cl.Type && c.Value == cl.Value);
             }
         }
 
@@ -96,19 +99,18 @@ namespace Identity.Test
             var claims = identity.Claims;
             Assert.NotNull(claims);
             Assert.NotNull(claims);
-            Assert.True(
-                claims.Any(c => c.Type == claimsFactory.UserNameClaimType && c.Value == user.UserName));
-            Assert.True(claims.Any(c => c.Type == claimsFactory.UserIdClaimType && c.Value == user.Id));
-            Assert.True(claims.Any(c => c.Type == claimsFactory.RoleClaimType && c.Value == "Admin"));
-            Assert.True(claims.Any(c => c.Type == claimsFactory.RoleClaimType && c.Value == "Local"));
-            Assert.True(
-                claims.Any(
-                    c =>
-                        c.Type == ClaimsIdentityFactory<IdentityUser>.IdentityProviderClaimType &&
-                        c.Value == ClaimsIdentityFactory<IdentityUser>.DefaultIdentityProviderClaimValue));
+            Assert.Contains(claims, c => c.Type == claimsFactory.UserNameClaimType && c.Value == user.UserName);
+            Assert.Contains(claims, c => c.Type == claimsFactory.UserIdClaimType && c.Value == user.Id);
+            Assert.Contains(claims, c => c.Type == claimsFactory.RoleClaimType && c.Value == "Admin");
+            Assert.Contains(claims, c => c.Type == claimsFactory.RoleClaimType && c.Value == "Local");
+
+            Assert.Contains(claims, c =>
+                c.Type == ClaimsIdentityFactory<IdentityUser>.IdentityProviderClaimType &&
+                c.Value == ClaimsIdentityFactory<IdentityUser>.DefaultIdentityProviderClaimValue);
+
             foreach (var cl in userClaims)
             {
-                Assert.True(claims.Any(c => c.Type == cl.Type && c.Value == cl.Value));
+                Assert.Contains(claims, c => c.Type == cl.Type && c.Value == cl.Value);
             }
         }
     }

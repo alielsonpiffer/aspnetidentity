@@ -33,7 +33,7 @@ namespace Identity.Test
             Assert.NotNull(user.PasswordHash);
             var logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(0, logins.Count());
+            Assert.Empty(logins);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace Identity.Test
             Assert.NotNull(user.PasswordHash);
             var logins = manager.GetLogins(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(0, logins.Count());
+            Assert.Empty(logins);
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(await manager.AddLoginAsync(user.Id, login));
             var logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(provider, logins.First().LoginProvider);
             Assert.Equal(providerKey, logins.First().ProviderKey);
         }
@@ -81,7 +81,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(manager.AddLogin(user.Id, login));
             var logins = manager.GetLogins(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(provider, logins.First().LoginProvider);
             Assert.Equal(providerKey, logins.First().ProviderKey);
         }
@@ -97,7 +97,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(await manager.AddPasswordAsync(user.Id, "password"));
             var logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(user, await manager.FindAsync(login));
             Assert.Equal(user, await manager.FindAsync(user.UserName, "password"));
         }
@@ -113,7 +113,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(manager.AddPassword(user.Id, "password"));
             var logins = manager.GetLogins(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(user, manager.Find(login));
             Assert.Equal(user, manager.Find(user.UserName, "password"));
         }
@@ -132,7 +132,7 @@ namespace Identity.Test
             Assert.Equal(user, await manager.FindAsync(login));
             var logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(login.LoginProvider, logins.Last().LoginProvider);
             Assert.Equal(login.ProviderKey, logins.Last().ProviderKey);
             var stamp = user.SecurityStamp;
@@ -140,7 +140,7 @@ namespace Identity.Test
             Assert.Null(await manager.FindAsync(login));
             logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(0, logins.Count());
+            Assert.Empty(logins);
             Assert.NotEqual(stamp, user.SecurityStamp);
         }
 
@@ -789,7 +789,7 @@ namespace Identity.Test
                 Assert.Equal(roles.Length, rs.Count);
                 foreach (var r in roles)
                 {
-                    Assert.True(rs.Any(role => role == r.Name));
+                    Assert.Contains(rs, role => role == r.Name);
                 }
             }
         }

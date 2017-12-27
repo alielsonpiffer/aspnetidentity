@@ -1,6 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the MIT License, Version 2.0. See License.txt in the project root for license information.
 
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security.DataProtection;
+using Moq;
 using System;
 using System.Data.Entity;
 using System.Globalization;
@@ -8,12 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security.DataProtection;
 using Xunit;
-using Moq;
 
 namespace Identity.Test
 {
@@ -681,7 +681,7 @@ namespace Identity.Test
             Assert.True(await manager.HasPasswordAsync(user.Id));
             var logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(0, logins.Count());
+            Assert.Empty(logins);
         }
 
         [Fact]
@@ -696,7 +696,7 @@ namespace Identity.Test
             Assert.True(manager.HasPassword(user.Id));
             var logins = manager.GetLogins(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(0, logins.Count());
+            Assert.Empty(logins);
         }
 
         [Fact]
@@ -732,7 +732,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(await manager.AddLoginAsync(user.Id, login));
             var logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(provider, logins.First().LoginProvider);
             Assert.Equal(providerKey, logins.First().ProviderKey);
         }
@@ -750,7 +750,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(manager.AddLogin(user.Id, login));
             var logins = manager.GetLogins(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(provider, logins.First().LoginProvider);
             Assert.Equal(providerKey, logins.First().ProviderKey);
         }
@@ -766,7 +766,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(await manager.AddPasswordAsync(user.Id, "password"));
             var logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(user, await manager.FindAsync(login));
             Assert.Equal(user, await manager.FindAsync(user.UserName, "password"));
             Assert.True(await manager.CheckPasswordAsync(user, "password"));
@@ -783,7 +783,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(manager.AddPassword(user.Id, "password"));
             var logins = manager.GetLogins(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(user, manager.Find(login));
             Assert.Equal(user, manager.Find(user.UserName, "password"));
             Assert.True(manager.CheckPassword(user, "password"));
@@ -803,7 +803,7 @@ namespace Identity.Test
             Assert.Equal(user, await manager.FindAsync(login));
             var logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(login.LoginProvider, logins.Last().LoginProvider);
             Assert.Equal(login.ProviderKey, logins.Last().ProviderKey);
             var stamp = await manager.GetSecurityStampAsync(user.Id);
@@ -811,7 +811,7 @@ namespace Identity.Test
             Assert.Null(await manager.FindAsync(login));
             logins = await manager.GetLoginsAsync(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(0, logins.Count());
+            Assert.Empty(logins);
             Assert.NotEqual(stamp, user.SecurityStamp);
         }
 
@@ -829,7 +829,7 @@ namespace Identity.Test
             Assert.Equal(user, manager.Find(login));
             var logins = manager.GetLogins(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(1, logins.Count());
+            Assert.Single(logins);
             Assert.Equal(login.LoginProvider, logins.Last().LoginProvider);
             Assert.Equal(login.ProviderKey, logins.Last().ProviderKey);
             var stamp = manager.GetSecurityStamp(user.Id);
@@ -837,7 +837,7 @@ namespace Identity.Test
             Assert.Null(manager.Find(login));
             logins = manager.GetLogins(user.Id);
             Assert.NotNull(logins);
-            Assert.Equal(0, logins.Count());
+            Assert.Empty(logins);
             Assert.NotEqual(stamp, user.SecurityStamp);
         }
 
@@ -1466,9 +1466,9 @@ namespace Identity.Test
             user.PhoneNumber = "123-456-7890";
             UnitTestHelper.IsSuccess(await manager.CreateAsync(user));
             var stamp = await manager.GetSecurityStampAsync(user.Id);
-            Assert.Equal(await manager.GetPhoneNumberAsync(user.Id), "123-456-7890");
+            Assert.Equal("123-456-7890", await manager.GetPhoneNumberAsync(user.Id));
             UnitTestHelper.IsSuccess(await manager.SetPhoneNumberAsync(user.Id, "111-111-1111"));
-            Assert.Equal(await manager.GetPhoneNumberAsync(user.Id), "111-111-1111");
+            Assert.Equal("111-111-1111", await manager.GetPhoneNumberAsync(user.Id));
             Assert.NotEqual(stamp, user.SecurityStamp);
         }
 
@@ -1481,9 +1481,9 @@ namespace Identity.Test
             user.PhoneNumber = "123-456-7890";
             UnitTestHelper.IsSuccess(manager.Create(user));
             var stamp = manager.GetSecurityStamp(user.Id);
-            Assert.Equal(manager.GetPhoneNumber(user.Id), "123-456-7890");
+            Assert.Equal("123-456-7890", manager.GetPhoneNumber(user.Id));
             UnitTestHelper.IsSuccess(manager.SetPhoneNumber(user.Id, "111-111-1111"));
-            Assert.Equal(manager.GetPhoneNumber(user.Id), "111-111-1111");
+            Assert.Equal("111-111-1111", manager.GetPhoneNumber(user.Id));
             Assert.NotEqual(stamp, user.SecurityStamp);
         }
 
@@ -1500,7 +1500,7 @@ namespace Identity.Test
             var token1 = await manager.GenerateChangePhoneNumberTokenAsync(user.Id, "111-111-1111");
             UnitTestHelper.IsSuccess(await manager.ChangePhoneNumberAsync(user.Id, "111-111-1111", token1));
             Assert.True(await manager.IsPhoneNumberConfirmedAsync(user.Id));
-            Assert.Equal(await manager.GetPhoneNumberAsync(user.Id), "111-111-1111");
+            Assert.Equal("111-111-1111", await manager.GetPhoneNumberAsync(user.Id));
             Assert.NotEqual(stamp, user.SecurityStamp);
         }
 
@@ -1517,7 +1517,7 @@ namespace Identity.Test
             var token1 = manager.GenerateChangePhoneNumberToken(user.Id, "111-111-1111");
             UnitTestHelper.IsSuccess(manager.ChangePhoneNumber(user.Id, "111-111-1111", token1));
             Assert.True(manager.IsPhoneNumberConfirmed(user.Id));
-            Assert.Equal(manager.GetPhoneNumber(user.Id), "111-111-1111");
+            Assert.Equal("111-111-1111", manager.GetPhoneNumber(user.Id));
             Assert.NotEqual(stamp, user.SecurityStamp);
         }
 
@@ -1534,7 +1534,7 @@ namespace Identity.Test
             UnitTestHelper.IsFailure(await manager.ChangePhoneNumberAsync(user.Id, "111-111-1111", "bogus"),
                 "Invalid token.");
             Assert.False(await manager.IsPhoneNumberConfirmedAsync(user.Id));
-            Assert.Equal(await manager.GetPhoneNumberAsync(user.Id), "123-456-7890");
+            Assert.Equal("123-456-7890", await manager.GetPhoneNumberAsync(user.Id));
             Assert.Equal(stamp, user.SecurityStamp);
         }
 

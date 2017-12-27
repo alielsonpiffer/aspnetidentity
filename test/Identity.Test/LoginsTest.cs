@@ -20,20 +20,20 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(await mgr.CreateAsync(user));
             var userLogin1 = new UserLoginInfo("provider1", "p1-1");
             var userLogin2 = new UserLoginInfo("provider2", "p2-1");
-            Assert.Equal(0, (await mgr.GetLoginsAsync(user.Id)).Count);
+            Assert.Empty((await mgr.GetLoginsAsync(user.Id)));
             UnitTestHelper.IsSuccess(await mgr.AddLoginAsync(user.Id, userLogin1));
-            Assert.Equal(1, user.Logins.Count(l => l.ProviderKey == "p1-1"));
-            Assert.Equal(1, (await mgr.GetLoginsAsync(user.Id)).Count);
+            Assert.Single(user.Logins.Where(l => l.ProviderKey == "p1-1"));
+            Assert.Single((await mgr.GetLoginsAsync(user.Id)));
             UnitTestHelper.IsSuccess(await mgr.AddLoginAsync(user.Id, userLogin2));
-            Assert.Equal(1, user.Logins.Count(l => l.ProviderKey == "p2-1"));
+            Assert.Single(user.Logins.Where(l => l.ProviderKey == "p2-1"));
             Assert.Equal(2, (await mgr.GetLoginsAsync(user.Id)).Count);
             UnitTestHelper.IsSuccess(await mgr.RemoveLoginAsync(user.Id, userLogin1));
-            Assert.Equal(0, user.Logins.Count(l => l.ProviderKey == "p1-1"));
-            Assert.Equal(1, user.Logins.Count(l => l.ProviderKey == "p2-1"));
-            Assert.Equal(1, (await mgr.GetLoginsAsync(user.Id)).Count());
+            Assert.Empty(user.Logins.Where(l => l.ProviderKey == "p1-1"));
+            Assert.Single(user.Logins.Where(l => l.ProviderKey == "p2-1"));
+            Assert.Single((await mgr.GetLoginsAsync(user.Id)));
             UnitTestHelper.IsSuccess(await mgr.RemoveLoginAsync(user.Id, userLogin2));
-            Assert.Equal(0, (await mgr.GetLoginsAsync(user.Id)).Count);
-            Assert.Equal(0, db.Set<IdentityUserLogin>().Count());
+            Assert.Empty((await mgr.GetLoginsAsync(user.Id)));
+            Assert.Empty(db.Set<IdentityUserLogin>());
         }
 
         [Fact]

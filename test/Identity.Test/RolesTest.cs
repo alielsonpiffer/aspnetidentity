@@ -267,7 +267,7 @@ namespace Identity.Test
             Assert.False(await roleMgr.RoleExistsAsync(role.Name));
             // REVIEW: We should throw if deleteing a non empty role?
             var roles = await userMgr.GetRolesAsync(user.Id);
-            Assert.Equal(0, roles.Count());
+            Assert.Empty(roles);
         }
 
         [Fact]
@@ -285,7 +285,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(await userMgr.AddToRoleAsync(user.Id, role.Name));
             UnitTestHelper.IsSuccess(await userMgr.DeleteAsync(user));
             role = roleMgr.FindById(role.Id);
-            Assert.Equal(0, role.Users.Count());
+            Assert.Empty(role.Users);
         }
 
         [Fact]
@@ -380,7 +380,7 @@ namespace Identity.Test
                 Assert.Equal(roles.Length, rs.Count);
                 foreach (IdentityRole r in roles)
                 {
-                    Assert.True(rs.Any(role => role == r.Name));
+                    Assert.Contains(rs, role => role == r.Name);
                 }
             }
         }
@@ -421,7 +421,7 @@ namespace Identity.Test
                 Assert.Equal(roles.Length, rs.Count);
                 foreach (var r in roles)
                 {
-                    Assert.True(rs.Any(role => role == r.Name));
+                    Assert.Contains(rs, role => role == r.Name);
                 }
             }
         }
@@ -481,7 +481,7 @@ namespace Identity.Test
                 Assert.Equal(0, u.Roles.Count(ur => ur.RoleId == r.Id));
                 Assert.False(await userManager.IsInRoleAsync(u.Id, r.Name));
             }
-            Assert.Equal(0, db.Set<IdentityUserRole>().Count());
+            Assert.Empty(db.Set<IdentityUserRole>());
         }
 
         [Fact]
@@ -512,7 +512,7 @@ namespace Identity.Test
                 UnitTestHelper.IsSuccess(store.RemoveFromRole(u.Id, r.Name));
                 Assert.False(store.IsInRole(u.Id, r.Name));
             }
-            Assert.Equal(0, db.Set<IdentityUserRole>().Count());
+            Assert.Empty(db.Set<IdentityUserRole>());
         }
 
         [Fact]
@@ -591,7 +591,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(await userManager.RemoveFromRolesAsync(user.Id, "r2", "r4"));
             Assert.False(await userManager.IsInRoleAsync(user.Id, "r2"));
             Assert.False(await userManager.IsInRoleAsync(user.Id, "r4"));
-            Assert.Equal(0, db.Set<IdentityUserRole>().Count());
+            Assert.Empty(db.Set<IdentityUserRole>());
         }
 
         [Fact]
@@ -628,7 +628,7 @@ namespace Identity.Test
             UnitTestHelper.IsSuccess(userManager.RemoveFromRoles(user.Id, "r2", "r4"));
             Assert.False(userManager.IsInRole(user.Id, "r2"));
             Assert.False(userManager.IsInRole(user.Id, "r4"));
-            Assert.Equal(0, db.Set<IdentityUserRole>().Count());
+            Assert.Empty(db.Set<IdentityUserRole>());
         }
 
 //        [Fact]

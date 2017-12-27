@@ -605,6 +605,13 @@ namespace Microsoft.AspNet.Identity
             return await UpdateAsync(user).WithCurrentCulture();
         }
 
+        /// <summary>
+        ///     Update a user's password
+        /// </summary>
+        /// <param name="passwordStore"></param>
+        /// <param name="user"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
         protected virtual async Task<IdentityResult> UpdatePassword(IUserPasswordStore<TUser, TKey> passwordStore,
             TUser user, string newPassword)
         {

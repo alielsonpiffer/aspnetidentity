@@ -15,7 +15,7 @@ namespace Identity.Test
             var result = new IdentityResult(null);
             Assert.NotNull(result.Errors);
             Assert.False(result.Succeeded);
-            Assert.Equal(1, result.Errors.Count());
+            Assert.Single(result.Errors);
             Assert.Equal("An unknown failure has occured.", result.Errors.First());
         }
     }

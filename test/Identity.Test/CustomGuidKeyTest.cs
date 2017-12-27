@@ -77,7 +77,7 @@ namespace Identity.Test
                 Assert.Equal(roles.Length, rs.Count);
                 foreach (GuidRole r in roles)
                 {
-                    Assert.True(rs.Any(role => role == r.Name));
+                    Assert.Contains(rs, role => role == r.Name);
                 }
             }
         }

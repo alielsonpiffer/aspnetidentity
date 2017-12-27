@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the MIT License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Data.Entity;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.DataProtection;
+using System.Data.Entity;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Identity.Test
@@ -118,7 +118,7 @@ namespace Identity.Test
                 Assert.Equal(roles.Length, rs.Count);
                 foreach (IdentityRole r in roles)
                 {
-                    Assert.True(rs.Any(role => role == r.Name));
+                    Assert.Contains(rs, role => role == r.Name);
                 }
             }
         }
