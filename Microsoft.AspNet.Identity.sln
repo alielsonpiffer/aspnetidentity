@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.Identity.Core", "src\Microsoft.AspNet.Identity.Core\Microsoft.AspNet.Identity.Core.csproj", "{D2F24972-0F56-4C18-BD65-C26A320A0C68}"
 EndProject
@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8883A4C2-A8DF-4F24-ADF7-DAEBFBEFD21B}"
 	ProjectSection(SolutionItems) = preProject
 		License.txt = License.txt
+		TextFile1.txt = TextFile1.txt
 		unittest.testsettings = unittest.testsettings
 	EndProjectSection
 EndProject
@@ -60,6 +61,9 @@ Global
 		{D7298DAD-AB04-4502-9567-0461D0AD059E} = {0C1D4BD7-0771-4899-AF55-43D8791660A0}
 		{943170EB-F4E7-4A6D-989E-2CF6C681DD89} = {0C1D4BD7-0771-4899-AF55-43D8791660A0}
 		{63175C48-7286-4D44-9AD6-E9B5929CE796} = {FD5D1AFD-204F-4504-B8F3-74C2E1EEC848}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B794E367-AA16-4FF0-AF68-ADA65C1B7FDC}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Microsoft.AspNet.Identity.vsmdi
